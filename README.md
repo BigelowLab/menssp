@@ -1,5 +1,5 @@
 # nssp
-Access, query and download from RESTful Maine DMR ESRI Map Service.
+Access, query and download from RESTful Maine DMR ESRI [Map Service](https://gis2.maine.gov/arcgis/rest/services/dmr).
 
 
 ### Requirements
