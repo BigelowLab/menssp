@@ -1,13 +1,12 @@
-#' nssp package
+#' menssp package
 #'
-#' Access Maine DMR NSSP data files (local or online).  Datasets are stored in 
+#' Access Maine DMR NSSP data files (local or online).  Datasets are stored in
 #'  geojson format and loaded easily into simple features (sf).  These points
 #'  and polygons can be manipulated/filtered using dplyr and sf packages.
 #'
-#' @name nssp-package
-#' @aliases nssp
+#' @name menssp-package
+#' @aliases menssp
 #' @docType package
 #' @importFrom magrittr %>%
-#' @description Access, query and download from RESTful Maine DMR ESRI Map 
-#'    Service.
+#' @description Access, query and download from RESTful Maine DMR ESRI Map Service.
 NULL

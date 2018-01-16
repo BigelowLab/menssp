@@ -1,4 +1,4 @@
-Package: nssp
+Package: menssp
 Type: Package
 Title: Access RESTful Maine DMR ESRI Map Service
 Version: 0.1.0
@@ -12,5 +12,7 @@ Imports:
     magrittr,
     dplyr,
     sf,
+    tmap,
+    tmaptools,
     esri2sf
 RoxygenNote: 6.0.1

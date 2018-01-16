@@ -1,3 +1,63 @@
+
+#' Return the default path, possible stored as an R option "MENSSP_PATH"
+#'
+#' The function attempts to retrieve this from option("MENSSP_PATH") which can be
+#' set at the begging of the R session or placed in the users .Rprofile
+#'
+#' @export
+#' @param x subdirectory (ala "current" or "nssp" or "P90")
+#' @param path the path to the various NSSP datasets
+#' @return named logical, TRUE if the path exists
+has_menssp <- function(x, root = options("MENSSP_PATH")){
+    if (is.null(root)) {
+        warning("root path to MENSSP data is NULL")
+        return(FALSE)
+    }
+    path <- if(!missing(x)) file.path(root, x) else root
+    x <- sapply(path[1], dir.exists)
+    if (!x[1]){
+        warning("path to MENSSP data not found:", path[1])
+    }
+    x
+}
+
+#' Retrieve the MENSSP path
+#'
+#' @export
+#' @param ... further arguments for \code{has_nsspme}
+#' @return the known MENSSP path
+menssp_path <- function(...){
+    names(has_menssp(...))
+}
+
+
+#' Read locally stored NSSP current data
+#'
+#' @export
+#' @param filename string filename with path or 'most_recent' (default) or 'online'
+#'  If 'online' then the current data is downloaded (and saved) before returning.
+#' @param path local path to NSSP files
+#' @param pa_number pattern to search for in the PA_NUMBER column or NA,
+#'      by default it is "^14" which is the greater Yarmouth/Freeport area.
+#' @return sf of NSSP pollution areas
+read_nssp <- function(filename = c('most_recent', "online")[1],
+    pa_number = c(base::glob2rx("14*"), NA)[1],
+    path = menssp_path()){
+
+    if (tolower(filename[1]) == 'online'){
+        x = fetch_curent()
+    } else {
+        if (tolower(filename[1]) == 'most_recent'){
+            path <- file.path(path, 'current')
+            ff <- list.files(path, pattern = base::glob2rx("*.geojson"), full.names = TRUE)
+            filename = ff[1]
+        }
+        x <- sf::read_sf(filename[1])
+    }
+    if (!is.na(pa_number)) x <- x %>% filter(grepl(pa_number, PA_NUMBER))
+    x
+}
+
 #' Read locally stored P90 data
 #'
 #' @export
@@ -5,26 +65,11 @@
 #' @param path local path to files
 #' @return sf of Points
 read_P90 <- function(year = 2016,
-    path = '/Users/ben/Dropbox/shellfish/data/dmr/P90'){
-        
+    path = nsspme_path('P90')){
+
     f = file.path(path, paste0("P90-", year[1], ".geojson"))
     sf::st_read(f)
 }
-
-#' Read locally stored NSSP annual data
-#'
-#' @export
-#' @param year numeric or string year to read
-#' @param path local path to files
-#' @return sf of Points
-read_nssp <- function(year = 2016,
-    path = '/Users/ben/Dropbox/shellfish/data/dmr/nssp'){
-        
-    f = file.path(path, paste0("NSSP-", year[1], ".geojson"))
-    sf::st_read(f)
-}
-
-
 
 #' Convert ESRI datetime (ms since 1970-01-01) to POSIXct
 #' @export
@@ -41,41 +86,23 @@ to_POSIXct <- function(x, origin = '1970-01-01 00:00.00 UTC', fact = 1000.0){
 #' @export
 #' @param uri string the uri to fetch
 #' @param dst_path string, the path to write to
+#' '
 fetch_current <- function(uri = uri_current(),
-    dst_path = "/Users/ben/Dropbox/shellfish/data/dmr/current"){
-    
-    
+    dst_path = menssp_path()){
+
+
     df = try(esri2sf::esri2sf(uri))
     if (inherits(df, 'try-error')) stop("error fetching current")
-    
-    # convert from esritime to POSIXct 
+
+    # convert from esritime to POSIXct
     nm = names(df)
     if ('D_EFFECTIVE' %in% nm)
         df$D_EFFECTIVE = to_POSIXct(df$D_EFFECTIVE)
     if ('D_REPEAL' %in% nm)
         df$D_REPEAL = to_POSIXct(df$D_REPEAL)
     oname = sprintf("NSSP-%s.geojson", format(as.Date(Sys.time()),"%Y-%m-%d"))
-    sf::st_write(df, file.path(dst_path, oname), delete_dsn = TRUE)
+    sf::write_sf(df, file.path(dst_path, "current", oname))
     invisible(df)
 }
 
-#' Read the current NSSP (either from disk or online)
-#'
-#' @export
-#' @param what string, either 'local' or 'live'
-#' @param local_path string, if local look here for the NSSP data
-#' @param ... further arguments for fetch_current if required
-#' @return sf
-read_current <- function(what = c("local", "live")[1],
-    local_path = "/Users/ben/Dropbox/shellfish/data/dmr/current",
-    ...){
-     
-    if (tolower(what[1]) == 'local'){
-        ff <- list.files(local_path, pattern = '^NSSP.*\\.geojson$',
-              full.names = TRUE)
-        x <- sf::st_read(ff[length(ff)])  
-    } else {
-        x <- fetch_current()
-    }   
-    invisible(x)
-} 
+
