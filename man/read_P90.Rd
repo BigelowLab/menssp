@@ -4,7 +4,7 @@
 \alias{read_P90}
 \title{Read locally stored P90 data}
 \usage{
-read_P90(year = 2016, path = "/Users/ben/Dropbox/shellfish/data/dmr/P90")
+read_P90(year = 2016, path = menssp_path("P90"))
 }
 \arguments{
 \item{year}{numeric or string year to read}

@@ -2,18 +2,23 @@
 % Please edit documentation in R/io.R
 \name{read_nssp}
 \alias{read_nssp}
-\title{Read locally stored NSSP annual data}
+\title{Read locally stored NSSP current data}
 \usage{
-read_nssp(year = 2016, path = "/Users/ben/Dropbox/shellfish/data/dmr/nssp")
+read_nssp(filename = c("most_recent", "online")[1],
+  pa_number = c(utils::glob2rx("14*"), NA)[1], path = menssp_path())
 }
 \arguments{
-\item{year}{numeric or string year to read}
+\item{filename}{string filename with path or 'most_recent' (default) or 'online'
+If 'online' then the current data is downloaded (and saved) before returning.}
 
-\item{path}{local path to files}
+\item{pa_number}{pattern to search for in the PA_NUMBER column or NA,
+by default it is "^14" which is the greater Yarmouth/Freeport area.}
+
+\item{path}{local path to NSSP files}
 }
 \value{
-sf of Points
+sf of NSSP pollution areas
 }
 \description{
-Read locally stored NSSP annual data
+Read locally stored NSSP current data
 }

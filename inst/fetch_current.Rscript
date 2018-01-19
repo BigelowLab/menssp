@@ -1,0 +1,8 @@
+# fetches the current data from ME DMR NSSP
+options(NEARTH_VECTOR_PATH = "/Users/Shared/data/natural_earth/vector",
+        NEARTH_RASTER_PATH = "/Users/Shared/data/natural_earth/raster",
+        MENSSP_PATH = "/Users/ben/Dropbox/shellfish/data/dmr",
+        MEOGIS_PATH = "/Users/Shared/data/meogis")
+library(menssp)
+x <- menssp:::fetch_current(save_current = "if_different")
+quit(save = "no")
