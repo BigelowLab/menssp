@@ -4,9 +4,8 @@
 \alias{uri_P90}
 \title{Get the URI for past P90 data by year}
 \usage{
-uri_P90(year = "2016",
-  base_uri = file.path("https://gis2.maine.gov/arcgis/rest/services",
-  "dmr/DMR_Public_Health_Historical_Bacteria_Data/MapServer"))
+uri_P90(year = "2016", base_uri = file.path(uri_base(),
+  "DMR_Public_Health_Historical_Bacteria_Data/MapServer"))
 }
 \arguments{
 \item{year}{string or numerc year}

@@ -1,12 +1,12 @@
 #' Get the URI for past P90 data by year
 #'
 #' @export
-#' @param year string or numerc year 
+#' @param year string or numerc year
 #' @param base_uri the base MapServer uri
 #' @return the uri as string
 uri_P90 <- function(year = '2016',
-    base_uri = file.path("https://gis2.maine.gov/arcgis/rest/services",
-        "dmr/DMR_Public_Health_Historical_Bacteria_Data/MapServer")){
+    base_uri = file.path(uri_base(),
+        "DMR_Public_Health_Historical_Bacteria_Data/MapServer")){
 
     switch(year[1],
         '2016' = file.path(base_uri,0),
@@ -19,12 +19,12 @@ uri_P90 <- function(year = '2016',
 #' Get the URI for past nssp by year
 #'
 #' @export
-#' @param year string or numerc year 
+#' @param year string or numerc year
 #' @param base_uri the base MapServer uri
 #' @return the uri as string
 uri_nssp <- function(year = '2016',
-    base_uri = file.path("https://gis2.maine.gov/arcgis/rest/services",
-        "dmr/DMR_Public_Health_Historical_Bacteria_Data/MapServer")){
+    base_uri = file.path(uri_base(),
+        "DMR_Public_Health_Historical_Bacteria_Data/MapServer")){
 
     switch(year[1],
         '2016' = file.path(base_uri,4),
@@ -40,6 +40,26 @@ uri_nssp <- function(year = '2016',
 #' @export
 #' @return the uri as string
 uri_current <- function(){
-    file.path("https://gis2.maine.gov/arcgis/rest/services",
-        "dmr/DMR_Public_Health_NSSP_current/MapServer/0")
+    file.path(uri_base(),
+    "/DMR_Public_Health_NSSP_current/MapServer/0")
+}
+
+#' Get the base uri
+#'
+#' @export
+#' @return the base uri for DMR's map services
+uri_base <- function(){
+    "https://gis2.maine.gov/arcgis/rest/services/dmr"
+}
+
+#' Launch URI for browsing if possible
+#'
+#' @export
+#' @param what string, 'mapserver' or 'info'
+#' @return integer flag, 0 means success
+browse_dmr <- function(what = c("mapserver", "info")[1]){
+    uri <- switch(tolower(what[1]),
+        'info' = 'http://www.maine.gov/dmr/shellfish-sanitation-management/closures/pollution.html',
+        uri_base())
+    httr::BROWSE(uri)
 }

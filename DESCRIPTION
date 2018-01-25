@@ -14,5 +14,6 @@ Imports:
     sf,
     tmap,
     tmaptools,
+    httr,
     esri2sf
 RoxygenNote: 6.0.1
